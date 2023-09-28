@@ -1,5 +1,6 @@
 import EntryCard from '@/components/EntryCard'
 import NewEntryCard from '@/components/NewEntryCard'
+import { analyze } from '@/utils/ai'
 import { getUserByClerkID } from '@/utils/auth'
 import { prisma } from '@/utils/db'
 import Link from 'next/link'
@@ -12,6 +13,9 @@ const getEntries = async () => {
     },
     orderBy: {
       createdAt: 'desc',
+    },
+    include: {
+      analysis: true,
     },
   })
 
@@ -27,7 +31,7 @@ const JournalPage = async () => {
         <NewEntryCard />
         {entries.map((entry) => (
           <Link href={`/journal/${entry.id}`} key={entry.id} entry={entry}>
-            <EntryCard entry={entry}/>
+            <EntryCard entry={entry} />
           </Link>
         ))}
       </div>

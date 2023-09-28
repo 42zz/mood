@@ -6,48 +6,49 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model User {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clerkId String @unique
-  email String @unique
+  clerkId String         @unique
+  email   String         @unique
   entries JournalEntry[]
 }
 
 model JournalEntry {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
+  updatedAt DateTime @updatedAt
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   content String @db.Text
 
-  analysis Analysis[]
+  analysis Analysis?
 
   @@unique([userId, id])
 }
 
 model Analysis {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   entryId String
-  entry JournalEntry @relation(fields: [entryId], references: [id])
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 
-  mood String
-  summary String @db.Text
-  color String
+  mood     String
+  summary  String  @db.Text
+  color    String
+  subject  String
   negative Boolean
 
-  @@index([entryId])
+  @@unique([entryId])
 }
